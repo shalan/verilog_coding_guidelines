@@ -1,4 +1,4 @@
-# nfrSoC RTL Coding Guidelines
+# Verilog HDL Coding Guidelines
 
 ## Introduction
 
@@ -18,42 +18,19 @@ The document outlines set of
 ## Commenting 
 + <span style="color:red">R</span>: Comment your code. Be reasonable. Too many comments and too few comments have their drawbacks.
 + <span style="color:yellow">G</span>: Use ```/* ... */``` for multi-line comments.
-+ <span style="color:red">R</span>: Add the following header to the top of all of your source files
-
-    ```
-    /*
-        Copyright YYYY Author_Name
-        
-        Licensed under the Apache License, Version 2.0 (the "License"); 
-        you may not use this file except in compliance with the License. 
-        You may obtain a copy of the License at:
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-        Unless required by applicable law or agreed to in writing, software 
-        distributed under the License is distributed on an "AS IS" BASIS, 
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        See the License for the specific language governing permissions and 
-        limitations under the License.
-    */
-    /*
-        Module Description
-    */
-    ```
++ <span style="color:red">R</span>: Add the company header to the top of all of your source files
 
 ## Naming 
 + <span style="color:red">R</span>: Create a Naming Convention for the design. Document it and use it consistently throughout the design. 
 + <span style="color:yellow">G</span>: Use capitals to identify constants: e.g.  ```STATE_S0```, ```GO```, ```ZERO```, e.tc.,
 + <span style="color:yellow">G</span>: Use lowercase letters for all signal names, variable names, and port names. 
 + <span style="color:yellow">G</span>: All parameter names must be in capitals
-+ <span style="color:red">R</span>: Do not Use Hard Coded Numeric Values. Instead, use `define to define constants.
-+ <span style="color:red">R</span>: Do not declare ``` `define``` statements in individual modules. Place all global definitions in external files with ```.vh``` extension. The files are included in the project using ``` `include```.
++ <span style="color:red">R</span>: Do not Use Hard Coded Numeric Values. Instead, use parameters to define constants.
 + <span style="color:yellow">G</span>: For active low signals, end the signal name with an underscore followed by a lowercase character (for example, ```_n``` or ```_b```). 
 + <span style="color:red">R</span>: When describing multibit buses, use a consistent ordering of bits 
 
 ## Module declaration/instantiation
 + <span style="color:red">R</span>: At most one module per file.
-+ <span style="color:red">R</span>: Each module should be defined in a separate file.
 + <span style="color:red">R</span>: Declare inputs and outputs one per line.
 + <span style="color:yellow">G</span>: Declare the ports in the following order: 
   + Clocks 
@@ -64,14 +41,14 @@ The document outlines set of
 + <span style="color:yellow">G</span>: Group ports logically by their function.
 + <span style="color:red">R</span>: Ports with ```inout``` cannot be used to create tri-state buses. Yosys synthesis tool does not fully support tri-state logic.
 + <span style="color:red">R</span>: Do not instantiate modules using positional arguments.  Always use the dot notation. In other words, connect ports by name in module instantiations.
-+ <span style="color:red">R</span>: Port connection widths must match.
++ <span style="color:red">R</span>: Port connection widths must match. 
 + <span style="color:red">R</span>: Expressions are not allowed in port connections.
 + <span style="color:red">R</span>: Drive all unused module inputs
 + <span style="color:red">R</span>: Connect unused module outputs
 + <span style="color:yellow">G</span>: Parameterize modules if appropriate and if readability is not degraded.
 
 ## Clocking
-+ <span style="color:red">R</span>: Core clock signal for a module is ```clk``` or ```CLK```. 
++ <span style="color:red">R</span>: Core clock signal for a module is ```clk``` or ```clock```. 
 + <span style="color:yellow">G</span>: All clocks, other than the core clock, should have a description of the clock and the frequency (e.g.  ```clk_ssp_625```).
 + <span style="color:yellow">G</span>: Use one clock per module if possible. 
 + <span style="color:yellow">G</span>: Do not use mixed clock edges if possible 
@@ -81,7 +58,7 @@ The document outlines set of
 + <span style="color:red">R</span>: Always reset sequential modules. Reset makes a design more deterministic and easier to verify. 
 + <span style="color:red">R</span>: ```initial``` shall not be used in RTL modeling. 
 + <span style="color:red">R</span>: Use asynchronous active low reset unless the target technology does not support this option.
-+ <span style="color:yellow">G</span>: Reset port name must reflect its function; e.g., use ```rst_n``` or ```RST_n``` for a module reset port.
++ <span style="color:yellow">G</span>: Reset port name must reflect its function; e.g., use ```rst_n``` or ```reset_n``` for a module reset port.
 
 ## Internal Tri-state logic
 + <span style="color:yellow">G</span>: Internal tristates for data bus access within a circuit must be used with care, and should be avoided if possible.
@@ -106,8 +83,7 @@ The document outlines set of
 + <span style="color:red">R</span>: Do not use ```casex``` in RTL modeling. 
 + <span style="color:red">R</span>: ```casez``` can only be used in very specific situations to compactly implement priority encoder style hardware structures.
 + <span style="color:red">R</span>: No asynchronous logic/combinational feedback loops/self-timed logic.
-+ <span style="color:red">R</span>: Don't hand-instantiated standard library cells within your RTL.
-+ <span style="color:red">R</span>: Synchronize any asynchronous input signal. Use brute-force synchronizer (2 flip flops) for single signals. Consult [2] for synchronizing buses.
++ <span style="color:red">R</span>: Synchronize any asynchronous input signal. Use brute-force synchronizer (2-3 flip flops in series) for single signals. Consult [2] for synchronizing buses.
 + <span style="color:red">R</span>: Synchronize any signal that crosses clock domains. Use brute force synchronizer to synchronize a signal coming from slower domain to a faster domain. Consult<sup>2</sup> for other scenarios.
 + <span style="color:yellow">G</span>: Eliminate Glue Logic at the Top Level 
 + <span style="color:red">R</span>: Do not assign ```x``` value to signals
@@ -121,11 +97,9 @@ The document outlines set of
 ## Memory
 + <span style="color:red">R</span>: Do not use large arrays. If your design needs SRAM memory block(s), consider using OpenRAM<sup>7</sup> or DFFRAM<sup>8</sup> projects.
 
-## Test Benching
-+ <span style="color:red">R</span>: Name the testbench file after the module it tests by appending ```_tb``` to the module name. For example ```smul_tb.v```
+## Miscellaneous
 + <span style="color:red">R</span>: ```initial``` shall not be used in RTL modeling. It can be used only to develop test benches. Use a reset signal to initialize registers if needed  (even though some synthesis tools support them for FPGA) 
 + <span style="color:red">R</span>: Delays shall not be used in RTL modeling. They can be used in test benching only.
-+ <span style="color:yellow">G</span>: In the test bench sample before the clock edge and drive after the clock edge.
 
 ## References
 1. Clifford E. Cummings, The Fundamentals of Efficient Synthesizable Finite State Machine Design. 
