@@ -98,7 +98,7 @@ The document outlines set of
 + <span style="color:red">R</span>: Do not use large arrays. If your design needs SRAM memory block(s), consider using OpenRAM<sup>7</sup> or DFFRAM<sup>8</sup> projects.
 
 ## Miscellaneous
-+ <span style="color:red">R</span>: ```initial``` shall not be used in RTL modeling. It can be used only to develop test benches. Use a reset signal to initialize registers if needed  (even though some synthesis tools support them for FPGA) 
++ <span style="color:red">R</span>: ```initial``` shall not be used in RTL modeling. It can be used only to develop test benches. Use a reset signal to initialize registers if needed  (note: some synthesis tools support them for FPGA) 
 + <span style="color:red">R</span>: Delays shall not be used in RTL modeling. They can be used in test benching only.
 
 ## References
